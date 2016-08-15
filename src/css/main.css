@@ -1,0 +1,15 @@
+.main{
+    padding: 20px;
+}
+
+.main-content{
+    padding-left: 15rem;
+}
+
+.run-button-container{
+    text-align: right;
+}
+
+.main .ui.run-button{
+    margin: 10px 0px;
+}
