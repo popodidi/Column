@@ -1,0 +1,28 @@
+#App{
+    position: relative;
+    height: 100%;
+}
+.main{
+    position: relative;
+    height: 100%;
+}
+
+.main .ui.tabular.menu{
+    /*overflow-x : scroll;*/
+    /*height: 10%;*/
+}
+
+.main .ui.bottom.attached.segment{
+    position: relative;
+    height: 90%;
+    width: 100%;
+    padding: 0;
+}
+
+.run-button-container{
+    text-align: right;
+}
+
+.main .ui.run-button{
+    margin: 10px 0px;
+}
