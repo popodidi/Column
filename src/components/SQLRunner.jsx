@@ -4,28 +4,30 @@ import {RouteHandler, Link, hashHistory} from 'react-router';
 
 import _ from 'lodash';
 
-import '../css/table_content.css';
+import '../css/tab_content.css';
 
 function getStatus(state) {
     return {
-        knex: state.knex,
-        sql_command: state.sql_runner.sql_command,
-        result: state.sql_runner.result
+        tab_index: state.active_tab,
+        sql_command: state.tabs[state.active_tab].sql_runner.command,
+        sql_result: state.tabs[state.active_tab].sql_runner.result
     }
 }
 
 function dispatchStatus(dispatch) {
     return {
-        setSqlCommand: function (e) {
+        setSqlCommand: function (tabIndex, sql_command) {
             dispatch({
                 type: 'SET_SQL_COMMAND',
-                sql_command: e.target.value
+                tabIndex: tabIndex,
+                sql_command: sql_command
             });
         },
-        setSqlResult: function (result) {
+        setSqlResult: function (tabIndex, sql_result) {
             dispatch({
                 type: 'SET_SQL_RESULT',
-                result: result
+                tabIndex: tabIndex,
+                sql_result: sql_result
             });
         }
     }
@@ -33,42 +35,38 @@ function dispatchStatus(dispatch) {
 
 class SQLRunner extends React.Component {
     runSqlCommand() {
-        console.log(this.props.sql_command);
         this.props.knex.raw(this.props.sql_command)
             .then((resp) => {
-                console.log("RESP", resp);
-
+                console.log("RESP", this);
                 if (resp.length > 0) {
-                    this.props.setSqlResult(resp);
+                    this.props.setSqlResult(this.props.tab_index, resp);
+                    this.forceUpdate();
                 }
             });
     }
 
+    sqlCommandOnChange(e){
+        this.props.setSqlCommand(this.props.tab_index, e.target.value)
+    }
+
 
     render() {
-        return (
-            <div className="sqlrunner">
-                <div className="ui form sql-command-input">
-                    <textarea rows="2" value={this.props.sql_command}
-                              onChange={this.props.setSqlCommand.bind(this)}></textarea>
-                </div>
-                <div className="run-button-container">
-                    <button className="ui primary button run-button" onClick={this.runSqlCommand.bind(this)}>Run
-                    </button>
-                </div>
+        var result = undefined;
+        if (this.props.sql_result.length > 0){
+            result = (
                 <div className="table-content">
                     <table className="ui celled padded table">
                         <thead>
                         <tr>
-                            {_.map(this.props.result[0], (value, key) => {
+                            {_.map(this.props.sql_result[0], (value, key) => {
                                 return (
-                                    <th key={key}>{key}</th>
+                                    <th key={value + key}>{key}</th>
                                 )
                             })}
                         </tr>
                         </thead>
                         <tbody>
-                        {_.map(this.props.result, (row, index) => {
+                        {_.map(this.props.sql_result, (row, index) => {
                             return (
                                 <tr key={index}>
                                     {_.map(row, (value) => {
@@ -82,6 +80,19 @@ class SQLRunner extends React.Component {
                         </tbody>
                     </table>
                 </div>
+            )
+        }
+        return (
+            <div className="sqlrunner">
+                <div className="ui form sql-command-input">
+                    <textarea rows="4" value={this.props.sql_command}
+                              onChange={this.sqlCommandOnChange.bind(this)}/>
+                </div>
+                <div className="run-button-container">
+                    <button className="ui primary button run-button" onClick={this.runSqlCommand.bind(this)}>Run
+                    </button>
+                </div>
+                {result}
             </div>
         );
     }

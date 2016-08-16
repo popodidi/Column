@@ -1,0 +1,26 @@
+.ui.grid.tab{
+    display: inline;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.tab .row{
+    height: 90%;
+}
+
+.two.wide.column{
+    min-width: 200px;
+    height: 100%;
+}
+
+.tab .ui.vertical.menu.tab-side-menu{
+    height: 100%;
+    width: 100%;
+    border-right: thin;
+}
+.tab .tab-content{
+    height: 100%;
+    width: 100%;
+    overflow: scroll;
+}

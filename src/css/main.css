@@ -1,9 +1,22 @@
+#App{
+    position: relative;
+    height: 100%;
+}
 .main{
-    padding: 20px;
+    position: relative;
+    height: 100%;
 }
 
-.main-content{
-    padding-left: 15rem;
+.main .ui.tabular.menu{
+    /*overflow-x : scroll;*/
+    /*height: 10%;*/
+}
+
+.main .ui.bottom.attached.segment{
+    position: relative;
+    height: 90%;
+    width: 100%;
+    padding: 0;
 }
 
 .run-button-container{

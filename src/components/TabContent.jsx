@@ -4,22 +4,22 @@ import {RouteHandler, Link, hashHistory} from 'react-router';
 
 import _ from 'lodash';
 
-import '../css/table_content.css';
+import '../css/tab_content.css';
 
-function getStatus(state) {
-    return {
-        knex: state.knex
-    }
-}
+// function getStatus(state) {
+//     return {
+//         knex: state.knex
+//     }
+// }
 
-class TableContent extends React.Component {
+class TabContent extends React.Component {
     constructor(props){
         super(props);
-        this.selecFromTable(props.params.tableName);
+        this.selecFromTable(props.tableName);
     }
 
     componentWillReceiveProps(nextProps) {
-        this.selecFromTable(nextProps.params.tableName)
+        this.selecFromTable(nextProps.tableName)
     }
 
     selecFromTable(tableName){
@@ -41,9 +41,9 @@ class TableContent extends React.Component {
                 <table className="ui celled padded table">
                     <thead>
                     <tr>
-                        {_.map(this.th, (th) => {
+                        {_.map(this.th, (th, index) => {
                             return (
-                                <th key={th}>{th}</th>
+                                <th key={th + index}>{th}</th>
                             )
                         })}
                     </tr>
@@ -67,8 +67,8 @@ class TableContent extends React.Component {
     }
 }
 
-// export default TableContent;
-export default connect(getStatus)(TableContent);
+export default TabContent;
+// export default connect(getStatus)(TabContent);
 
 
 // <div className="ui form sql-command-input">

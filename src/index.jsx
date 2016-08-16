@@ -5,7 +5,8 @@ import {Router, Route, IndexRoute, hashHistory} from 'react-router';
 // Compenent
 import Intro from './components/Intro.jsx';
 import Main from './components/Main.jsx';
-import TableContent from './components/TableContent.jsx';
+import Tab from './components/Tab.jsx';
+import TabContent from './components/TabContent.jsx';
 import SQLRunner from './components/SQLRunner.jsx';
 
 import {Provider} from 'react-redux';
@@ -18,13 +19,7 @@ import '../semantic/dist/semantic.css';
 ReactDOM.render(
     <Provider store={store}>
         <Router history={hashHistory}>
-            <Route path="/" component={Base}>
-                <IndexRoute component={Intro}/>
-                <Route path="/intro" component={Intro}/>
-                <Route path="/main" component={Main}>
-                    <IndexRoute component={SQLRunner}/>
-                    <Route path="/main/table/:tableName" component={TableContent} />
-                </Route>
+            <Route path="/" component={Main}>
             </Route>
         </Router>
     </Provider>,

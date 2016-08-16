@@ -8,30 +8,19 @@ import '../css/intro.css';
 
 function getStatus(state) {
     return {
-        db_directory: state.db_directory,
-        tables: state.tables
+        index: state.active_tab,
+        tab: state.tabs[state.active_tab]
     }
 }
 
 function dispatchStatus(dispatch) {
     return {
-        setDbDirectory: function (db_directory) {
+        updateTab: function (index, tab) {
             dispatch({
-                type: 'SET_DB_DIRECTORY',
-                db_directory: db_directory
-            });
-        },
-        setTables: function (tables) {
-            dispatch({
-                type: 'SET_TABLES',
-                tables: tables
-            });
-        },
-        setKnex: function (knex) {
-            dispatch({
-                type: 'SET_KNEX',
-                knex: knex
-            });
+                type: 'UPDATE_TAB',
+                index: index,
+                tab: tab
+            })
         }
     }
 }
@@ -43,29 +32,36 @@ class Intro extends React.Component {
     }
 
     fileInputChange(event) {
-        const reader = new FileReader();
-        console.log(event.target.files[0].path);
-        this.props.setDbDirectory(event.target.files[0].path);
+        const newTab = Object.assign({}, this.props.tab, {db_directory: event.target.files[0].path});
+        this.props.updateTab(this.props.index, newTab);
     }
 
     start() {
 
+        var db_name = _(this.props.tab.db_directory).split('/').last()
+
         var knex = require('knex')({
             client: 'sqlite3',
             connection: {
-                filename: this.props.db_directory
+                filename: this.props.tab.db_directory
             }
         });
-        this.props.setKnex(knex);
-        knex.select().from('sqlite_master')
+
+        var tables = ["sqlite_master"];
+        knex.select().from('sqlite_master').where({type: 'table'})
             .then((rows) => {
-                var tables = [];
                 _.forIn(rows, (value, key) => {
                     tables = _.concat(tables, [value.name]);
                 });
-                this.props.setTables(tables);
             }).then(() => {
-            hashHistory.push('/main')
+            const newTab = Object.assign({}, this.props.tab,
+                {
+                    db_name: db_name,
+                    knex: knex,
+                    tables: tables
+                });
+            this.props.updateTab(this.props.index, newTab);
+            hashHistory.push('/');
         });
     }
 
@@ -75,7 +71,7 @@ class Intro extends React.Component {
                 <input ref="open" type="file" className="ui button" style={{display:'none'}}
                        onChange={this.fileInputChange.bind(this)}/>
                 <div className="ui action input db-browser">
-                    <input type="text" placeholder="Search..." value={this.props.db_directory} readOnly/>
+                    <input type="text" placeholder="Search..." value={this.props.tab.db_directory} readOnly/>
                     <button className="ui button" onClick={this.openFile.bind(this)}>Browse</button>
                 </div>
                 <button className="massive ui button go-button" onClick={this.start.bind(this)}>START</button>

@@ -1,12 +1,33 @@
 const initialState = {
-    db_directory: "Choose your SQLite database ...",
-    // db_directory: "/Users/changhao/Desktop/Slackbot/database.sqlite",
-    tables: [],
-
-    sql_runner:{
-        sql_command: "",
-        result: []
-    }
+    // db_directory: "Choose your SQLite database ...",
+    // tables: [],
+    //
+    active_tab: 0,
+    tabs: [
+        {
+            db_directory: "Choose your SQLite database ...",
+            db_name: "Choose Database",
+            knex: undefined,
+            selected_table: "sqlite_master",
+            tables: ["sqlite_master"],
+            sql_runner: {
+                command: "",
+                result: []
+            }
+        }
+    ],
+    default_tab: {
+        db_directory: "Choose your SQLite database ...",
+        db_name: "Choose Database",
+        knex: undefined,
+        selected_table: "sqlite_master",
+        tables: ["sqlite_master"],
+        sql_runner: {
+            sql_command: "",
+            result: []
+        }
+    },
+    sql_runner: "SQL Runner Tab Content"
 };
 
 function reducer(state, action) {
@@ -15,12 +36,18 @@ function reducer(state, action) {
     }
 
     switch (action.type) {
-        case 'SET_DB_DIRECTORY':
-            return setDbDirectory(state, action);
-        case 'SET_TABLES':
-            return setTables(state, action);
-        case 'SET_KNEX':
-            return setKnex(state, action);
+        case 'ADD_TAB':
+            return addTab(state, action);
+        case 'SET_ACTIVE_TAB':
+            return setActiveTab(state, action);
+        case 'UPDATE_TAB':
+            return updateTab(state, action);
+        // case 'SET_DB_DIRECTORY':
+        //     return setDbDirectory(state, action);
+        // case 'SET_TABLES':
+        //     return setTables(state, action);
+        // case 'SET_KNEX':
+        //     return setKnex(state, action);
         case 'SET_SQL_COMMAND':
             return setSqlCommand(state, action);
         case 'SET_SQL_RESULT':
@@ -31,36 +58,45 @@ function reducer(state, action) {
 }
 
 // Actions
-function setDbDirectory(state, action){
-    return Object.assign({}, state, { db_directory: action.db_directory });
+function addTab(state, action) {
+    return Object.assign({}, state, {tabs: state.tabs.concat([state.default_tab])});
 }
 
-function setTables(state, action){
-    return Object.assign({}, state, { tables: action.tables });
+function setActiveTab(state, action) {
+    return Object.assign({}, state, {active_tab: action.active_tab});
 }
 
-function setKnex(state, action){
-    return Object.assign({}, state, { knex: action.knex });
+function updateTab(state, action) {
+    var newTabs = state.tabs;
+    newTabs[action.index] = action.tab;
+    return Object.assign({}, state,{tabs: newTabs});
 }
 
-function setSqlResult(state, action){
-    return Object.assign({}, state,
-        {sql_runner: Object.assign({}, state.sql_runner,
-            {
-                result: action.result
-            }
-        )}
-    )
+// function setDbDirectory(state, action) {
+//     return Object.assign({}, state, {db_directory: action.db_directory});
+// }
+//
+// function setTables(state, action) {
+//     return Object.assign({}, state, {tables: action.tables});
+// }
+//
+// function setKnex(state, action) {
+//     return Object.assign({}, state, {knex: action.knex});
+// }
+
+function setSqlResult(state, action) {
+
+    var newTabs = state.tabs;
+    console.log("IN",action.tabIndex);
+    console.log("RE",newTabs[action.tabIndex]);
+    newTabs[action.tabIndex].sql_runner.result = action.sql_result;
+    return Object.assign({}, state,{tabs: newTabs});
 }
 
-function setSqlCommand(state, action){
-    return Object.assign({}, state,
-        {sql_runner: Object.assign({}, state.sql_runner,
-            {
-                sql_command: action.sql_command
-            }
-        )}
-    )
+function setSqlCommand(state, action) {
+    var newTabs = state.tabs;
+    newTabs[action.tabIndex].sql_runner.command = action.sql_command;
+    return Object.assign({}, state,{tabs: newTabs});
 }
 
 
