@@ -12,9 +12,6 @@ import '../css/main.css';
 
 function getStatus(state) {
     return {
-        // db_directory: state.db_directory,
-        // tables: state.tables,
-        // knex: state.knex,
         active_tab: state.active_tab,
         tabs: state.tabs,
         default_tab: state.default_tab
@@ -53,13 +50,13 @@ class Main extends React.Component {
                         return (
                             <a key={'tab'+ index} className={className}
                                onClick={this.selectTab.bind(this, index)}>{tab.db_name}
-                                <i className="fa fa-times" aria-hidden="true"></i>
+                                <i className="remove circle icon"/>
                             </a>
                         )
                     })}
                     <div className="right menu">
                         <a className="item" onClick={this.props.addTab}>
-                            New Tab
+                            New Tabkk
                         </a>
                     </div>
                 </div>
