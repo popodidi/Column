@@ -9,8 +9,9 @@ import 'brace/theme/github';
 import 'brace/ext/language_tools';
 
 import _ from 'lodash';
+import $ from 'jquery';
 
-import '../css/tab_content.css';
+import '../css/sqlrunner.css';
 
 function getStatus(state) {
     return {
@@ -41,6 +42,9 @@ function dispatchStatus(dispatch) {
 
 class SQLRunner extends React.Component {
     runSqlCommand() {
+        $(this.refs.modal)
+            .modal('show')
+        ;
         this.props.knex.raw(this.props.sql_command)
             .then((resp) => {
                 console.log("RESP", resp);
@@ -51,7 +55,7 @@ class SQLRunner extends React.Component {
             });
     }
 
-    sqlCommandOnChange(newValue) {
+    setSqlCommand(newValue) {
         this.props.setSqlCommand(this.props.tab_index, newValue)
     }
 
@@ -82,23 +86,26 @@ class SQLRunner extends React.Component {
                 )
             });
             result = (
-                <div className="table-content">
-                    <table className="ui celled padded table">
-                        <thead>
-                        <tr>
-                            {thead}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {tbody}
-                        </tbody>
-                    </table>
+                <div className="sql-result">
+                    <div className="">
+                        <table className="ui celled padded table">
+                            <thead>
+                            <tr>
+                                {thead}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {tbody}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             );
         }
         return (
-            <div className="sqlrunner">
+            <div className="sql-runner">
                 <AceEditor
+                    className="sql-editor"
                     mode="mysql"
                     theme="github"
                     name="sql_command"
@@ -106,17 +113,29 @@ class SQLRunner extends React.Component {
                     fontSize={17}
                     editorProps={{$blockScrolling: true}}
                     value={this.props.sql_command}
-                    onChange={this.sqlCommandOnChange.bind(this)}
+                    onChange={this.setSqlCommand.bind(this)}
                     height="100px"
                     width="100%"
                     enableBasicAutocompletion={true}
                     enableLiveAutocompletion={true}
                 />
-                <div className="run-button-container">
-                    <button className="ui primary button run-button" onClick={this.runSqlCommand.bind(this)}>Run
+                <div className="sql-runner-run-button-container">
+                    <button className="ui primary button sql-runner-button" onClick={this.runSqlCommand.bind(this)}>
+                        Run
+                    </button>
+                    <button className="ui basic right button sql-runner-button" onClick={this.setSqlCommand.bind(this, "")}>
+                        Clear
                     </button>
                 </div>
                 {result}
+                <div ref="modal" className="ui modal">
+                    <div className="header">Header</div>
+                    <div className="content">
+                        <p></p>
+                        <p></p>
+                        <p></p>
+                    </div>
+                </div>
             </div>
         );
     }

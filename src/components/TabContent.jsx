@@ -55,7 +55,7 @@ class TabContent extends React.Component {
             )
         });
         return (
-            <div className="table-content">
+            <div className="ui basic segment table-content">
                 <table className="ui celled padded table">
                     <thead>
                     <tr>

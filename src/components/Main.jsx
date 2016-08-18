@@ -60,7 +60,7 @@ class Main extends React.Component {
         const {tabs} = this.props;
         return (
             <div className="main">
-                <div className="ui top attached tabular menu">
+                <div className="ui top attached tabular menu tab-menu">
                     {_.map(tabs, (tab, index) => {
                         const className = index == this.props.active_tab ? "active item" : "item";
                         return (
@@ -82,7 +82,7 @@ class Main extends React.Component {
                         </a>
                     </div>
                 </div>
-                <div className="ui bottom attached segment">
+                <div className="ui bottom attached segment tab-body">
                     {this.props.tabs[this.props.active_tab].db_name === this.props.default_tab.db_name ?
                         <Intro /> : <Tab />}
                 </div>

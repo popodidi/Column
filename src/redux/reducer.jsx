@@ -60,7 +60,10 @@ function reducer(state, action) {
 
 // Actions
 function addTab(state, action) {
-    return Object.assign({}, state, {tabs: state.tabs.concat([state.default_tab])});
+    return Object.assign({}, state, {
+        active_tab: state.tabs.length,
+        tabs: state.tabs.concat([state.default_tab])
+    });
 }
 
 function setActiveTab(state, action) {

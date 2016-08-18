@@ -1,6 +1,7 @@
-.ui.grid.tab{
+.tab{
     display: inline;
     position: relative;
+    /*padding-left: 10px;*/
     height: 100%;
     width: 100%;
 }
@@ -14,13 +15,34 @@
     height: 100%;
 }
 
-.tab .ui.vertical.menu.tab-side-menu{
+.ui.vertical.menu.tab-side-menu{
     height: 100%;
     width: 100%;
     border-right: thin;
 }
-.tab .tab-content{
+
+.tab-side-panel{
+    float: left;
+    padding-top: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 20%;
     height: 100%;
-    width: 100%;
+    box-sizing: border-box;
+}
+
+.tab .tab-content{
+    position: relative;
+    float: left;
+    width: 80%;
+    height: 100%;
     overflow: scroll;
 }
+
+.tab-content-inner{
+    position: relative;
+    padding-right: 10px;
+    overflow: scroll;
+    height: 100%;
+}
+

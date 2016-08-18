@@ -24,7 +24,7 @@ var config = {
     },
     devServer: {
         contentBase: './.build/',
-        hot: true,
+        // hot: true,
         port: 8080
     },
     module: {

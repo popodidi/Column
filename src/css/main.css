@@ -4,25 +4,21 @@
 }
 .main{
     position: relative;
-    height: 100%;
-}
-
-.main .ui.tabular.menu{
-    /*overflow-x : scroll;*/
-    /*height: 10%;*/
-}
-
-.main .ui.bottom.attached.segment{
-    position: relative;
-    height: 90%;
+    padding-top: 10px;
     width: 100%;
-    padding: 0;
+    height: 100%;
+    overflow: hidden;
 }
 
-.run-button-container{
-    text-align: right;
+.main .tab-menu{
+    padding-left: 10px;
 }
 
-.main .ui.run-button{
-    margin: 10px 0px;
+.main .tab-body{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    margin-right:0;
+    padding: 0 !important;
+    padding-bottom: 55px !important;
 }
