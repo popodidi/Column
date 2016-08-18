@@ -2,6 +2,12 @@ import React from 'react';
 import {connect} from 'react-redux'
 import {RouteHandler, Link, hashHistory} from 'react-router';
 
+import AceEditor from 'react-ace';
+import brace from 'brace';
+import 'brace/mode/mysql';
+import 'brace/theme/github';
+import 'brace/ext/language_tools';
+
 import _ from 'lodash';
 
 import '../css/tab_content.css';
@@ -37,7 +43,7 @@ class SQLRunner extends React.Component {
     runSqlCommand() {
         this.props.knex.raw(this.props.sql_command)
             .then((resp) => {
-                console.log("RESP", this);
+                console.log("RESP", resp);
                 if (resp.length > 0) {
                     this.props.setSqlResult(this.props.tab_index, resp);
                     this.forceUpdate();
@@ -45,49 +51,67 @@ class SQLRunner extends React.Component {
             });
     }
 
-    sqlCommandOnChange(e){
-        this.props.setSqlCommand(this.props.tab_index, e.target.value)
+    sqlCommandOnChange(newValue) {
+        this.props.setSqlCommand(this.props.tab_index, newValue)
     }
 
 
     render() {
         var result = undefined;
-        if (this.props.sql_result.length > 0){
+        if (this.props.sql_result.length > 0) {
+            const rows = this.props.sql_result;
+            const ths = _.map(rows[0], (value, key) => {
+                return key;
+            });
+            const thead = _.map(ths, (th, index) => {
+                return (
+                    <th key={"head cell" + th + index}>{th}</th>
+                )
+            });
+
+            const tbody = _.map(rows, (row, rowIndex) => {
+                return (
+                    <tr key={"body cell " +rowIndex}>
+                        {_.map(ths, (th, thIndex) => {
+                            const tdValue = row[th];
+                            return (
+                                <td key={"body cell: {\n" + "ROW:" + rowIndex + ",\n COLUMN: " + thIndex + "\n}"}>{tdValue}</td>
+                            )
+                        })}
+                    </tr>
+                )
+            });
             result = (
                 <div className="table-content">
                     <table className="ui celled padded table">
                         <thead>
                         <tr>
-                            {_.map(this.props.sql_result[0], (value, key) => {
-                                return (
-                                    <th key={value + key}>{key}</th>
-                                )
-                            })}
+                            {thead}
                         </tr>
                         </thead>
                         <tbody>
-                        {_.map(this.props.sql_result, (row, index) => {
-                            return (
-                                <tr key={index}>
-                                    {_.map(row, (value) => {
-                                        return (
-                                            <td key={value}>{value}</td>
-                                        )
-                                    })}
-                                </tr>
-                            )
-                        })}
+                        {tbody}
                         </tbody>
                     </table>
                 </div>
-            )
+            );
         }
         return (
             <div className="sqlrunner">
-                <div className="ui form sql-command-input">
-                    <textarea rows="4" value={this.props.sql_command}
-                              onChange={this.sqlCommandOnChange.bind(this)}/>
-                </div>
+                <AceEditor
+                    mode="mysql"
+                    theme="github"
+                    name="sql_command"
+                    showPrintMargin={false}
+                    fontSize={17}
+                    editorProps={{$blockScrolling: true}}
+                    value={this.props.sql_command}
+                    onChange={this.sqlCommandOnChange.bind(this)}
+                    height="100px"
+                    width="100%"
+                    enableBasicAutocompletion={true}
+                    enableLiveAutocompletion={true}
+                />
                 <div className="run-button-container">
                     <button className="ui primary button run-button" onClick={this.runSqlCommand.bind(this)}>Run
                     </button>

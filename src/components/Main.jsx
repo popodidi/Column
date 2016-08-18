@@ -30,6 +30,12 @@ function dispatchStatus(dispatch) {
                 type: 'SET_ACTIVE_TAB',
                 active_tab: active_tab
             });
+        },
+        deleteTab: function (index) {
+            dispatch({
+                type: 'DELETE_TAB',
+                index: index
+            });
         }
     }
 }
@@ -40,29 +46,45 @@ class Main extends React.Component {
         this.props.setActiveTab(index);
     }
 
+    closeTab(index, e) {
+        console.log(index);
+        this.props.deleteTab(index);
+        this.forceUpdate();
+    }
+
+    onLoad(editor) {
+        editor.props.enable
+    }
 
     render() {
+        const {tabs} = this.props;
         return (
             <div className="main">
                 <div className="ui top attached tabular menu">
-                    {_.map(this.props.tabs, (tab, index) => {
+                    {_.map(tabs, (tab, index) => {
                         const className = index == this.props.active_tab ? "active item" : "item";
                         return (
-                            <a key={'tab'+ index} className={className}
-                               onClick={this.selectTab.bind(this, index)}>{tab.db_name}
-                                <i className="remove circle icon"/>
-                            </a>
+                            <div key={'tab'+ index} className={className}>
+                                <div onClick={this.selectTab.bind(this, index)}>
+                                    {tab.db_name}
+                                </div>
+                                { this.props.tabs.length > 1 ?
+                                    <i className="remove icon"
+                                       onClick={this.closeTab.bind(this, index)}/> : undefined
+                                }
+                            </div>
                         )
                     })}
                     <div className="right menu">
                         <a className="item" onClick={this.props.addTab}>
-                            New Tabkk
+                            <i className="add icon"/>
+                            New Tab
                         </a>
                     </div>
                 </div>
                 <div className="ui bottom attached segment">
                     {this.props.tabs[this.props.active_tab].db_name === this.props.default_tab.db_name ?
-                    <Intro /> : <Tab />}
+                        <Intro /> : <Tab />}
                 </div>
             </div>
         );

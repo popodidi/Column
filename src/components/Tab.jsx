@@ -44,7 +44,7 @@ class Tab extends React.Component {
     render() {
         const {knex, selected_table} = this.props.tab;
         return (
-            <div className="ui two column devided grid tab">
+            <div className="ui grid tab">
                 <div className="row">
                     <div className="two wide column">
                         <div className="ui secondary vertical menu tab-side-menu">
@@ -64,7 +64,7 @@ class Tab extends React.Component {
                             })}
                         </div>
                     </div>
-                    <div className="twelve wide stretched column tab-content">
+                    <div className="fourteen wide stretched column tab-content">
                         {selected_table == this.props.sql_runner?
                             <SQLRunner knex={knex}/> : <TabContent tableName={selected_table} knex={knex}/>}
                     </div>

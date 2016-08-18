@@ -1,3 +1,7 @@
+import _ from 'lodash';
+
+const default_db_directory = process.env.NODE_ENV == "development" ? "/Users/changhao/Desktop/apm.db": undefined;
+
 const initialState = {
     // db_directory: "Choose your SQLite database ...",
     // tables: [],
@@ -5,7 +9,8 @@ const initialState = {
     active_tab: 0,
     tabs: [
         {
-            db_directory: "Choose your SQLite database ...",
+            // db_directory: "Choose your SQLite database ...",
+            db_directory:default_db_directory,
             db_name: "Choose Database",
             knex: undefined,
             selected_table: "sqlite_master",
@@ -17,7 +22,7 @@ const initialState = {
         }
     ],
     default_tab: {
-        db_directory: "Choose your SQLite database ...",
+        db_directory: default_db_directory,
         db_name: "Choose Database",
         knex: undefined,
         selected_table: "sqlite_master",
@@ -42,12 +47,8 @@ function reducer(state, action) {
             return setActiveTab(state, action);
         case 'UPDATE_TAB':
             return updateTab(state, action);
-        // case 'SET_DB_DIRECTORY':
-        //     return setDbDirectory(state, action);
-        // case 'SET_TABLES':
-        //     return setTables(state, action);
-        // case 'SET_KNEX':
-        //     return setKnex(state, action);
+        case 'DELETE_TAB':
+            return deleteTab(state, action);
         case 'SET_SQL_COMMAND':
             return setSqlCommand(state, action);
         case 'SET_SQL_RESULT':
@@ -72,23 +73,21 @@ function updateTab(state, action) {
     return Object.assign({}, state,{tabs: newTabs});
 }
 
-// function setDbDirectory(state, action) {
-//     return Object.assign({}, state, {db_directory: action.db_directory});
-// }
-//
-// function setTables(state, action) {
-//     return Object.assign({}, state, {tables: action.tables});
-// }
-//
-// function setKnex(state, action) {
-//     return Object.assign({}, state, {knex: action.knex});
-// }
+function deleteTab(state, action) {
+    var newTabs = state.tabs;
+    newTabs.splice(action.index, 1);
+    var newActiveTab = state.active_tab;
+    if (state.active_tab >= state.tabs.length) {
+        newActiveTab -= 1;
+    }
+    return Object.assign({}, state, {
+        active_tab: newActiveTab,
+        tabs: newTabs
+    });
+}
 
 function setSqlResult(state, action) {
-
     var newTabs = state.tabs;
-    console.log("IN",action.tabIndex);
-    console.log("RE",newTabs[action.tabIndex]);
     newTabs[action.tabIndex].sql_runner.result = action.sql_result;
     return Object.assign({}, state,{tabs: newTabs});
 }

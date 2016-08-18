@@ -13,22 +13,26 @@ fs.readdirSync('node_modules')
 
 var config = {
     entry: [
+        "webpack-dev-server/client?http://localhost:8080/",
+        "webpack/hot/only-dev-server",
         './src/index.jsx'
     ],
     output: {
         path: './.build',
-        publicPath:'./',
+        publicPath: 'http://localhost:8080/',
         filename: 'bundle.js'
+    },
+    devServer: {
+        contentBase: './.build/',
+        hot: true,
+        port: 8080
     },
     module: {
         loaders: [
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loader: 'babel',
-                query: {
-                    presets: ['es2015', 'react']
-                }
+                loaders: ['react-hot', 'babel?presets[]=react,presets[]=es2015']
             },
             {test: /\.json$/, loader: 'json-loader'},
             {test: /\.css$/, loader: 'style-loader!css-loader'},
@@ -48,7 +52,8 @@ var config = {
         new webpack.ProvidePlugin({
             "jQuery": "jquery"
         }),
-        new webpack.IgnorePlugin(new RegExp("^(fs|ipc)$"))//,
+        // new webpack.IgnorePlugin(new RegExp("^(fs|ipc)$"))//,
+        new webpack.HotModuleReplacementPlugin()
     ],
     externals: [nodeModules]
 };

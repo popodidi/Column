@@ -13,7 +13,7 @@ import '../css/tab_content.css';
 // }
 
 class TabContent extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.selecFromTable(props.tableName);
     }
@@ -22,7 +22,7 @@ class TabContent extends React.Component {
         this.selecFromTable(nextProps.tableName)
     }
 
-    selecFromTable(tableName){
+    selecFromTable(tableName) {
         this.props.knex.select().from(tableName)
             .then((rows) => {
                 if (rows.length > 0) {
@@ -36,30 +36,34 @@ class TabContent extends React.Component {
     }
 
     render() {
+        const thead = _.map(this.th, (th, index) => {
+            return (
+                <th key={"head cell" + th + index}>{th}</th>
+            )
+        });
+
+        const tbody = _.map(this.td, (row, rowIndex) => {
+            return (
+                <tr key={"body cell " +rowIndex}>
+                    {_.map(this.th, (th, thIndex) => {
+                        const tdValue = row[th];
+                        return (
+                            <td key={"body cell: {\n" + "ROW:" + rowIndex + ",\n COLUMN: " + thIndex + "\n}"}>{tdValue}</td>
+                        )
+                    })}
+                </tr>
+            )
+        });
         return (
             <div className="table-content">
                 <table className="ui celled padded table">
                     <thead>
                     <tr>
-                        {_.map(this.th, (th, index) => {
-                            return (
-                                <th key={th + index}>{th}</th>
-                            )
-                        })}
+                        {thead}
                     </tr>
                     </thead>
                     <tbody>
-                    {_.map(this.td, (row, index) => {
-                        return (
-                            <tr key={index}>
-                                {_.map(row, (value) => {
-                                    return (
-                                        <td key={value}>{value}</td>
-                                    )
-                                })}
-                            </tr>
-                        )
-                    })}
+                    {tbody}
                     </tbody>
                 </table>
             </div>
