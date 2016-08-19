@@ -5,8 +5,8 @@
   "main": "electron_main.js",
   "scripts": {
     "rebuild": "./node_modules/.bin/electron-rebuild",
-    "dev-server" : "NODE_ENV=development webpack-dev-server --config webpack.config.development.js",
-    "dev-electron" : "NODE_ENV=development electron .",
+    "dev-server": "NODE_ENV=development webpack-dev-server --config webpack.config.development.js",
+    "dev-electron": "NODE_ENV=development electron .",
     "pro-webpack": "NODE_ENV=production webpack --config webpack.config.js",
     "pro-electron": "NODE_ENV=production electron .",
     "build-for-mac": "NODE_ENV=production electron-packager ./ Column --platform=darwin --arch=x64 --overwrite"
@@ -14,14 +14,15 @@
   "author": "Hao",
   "license": "ISC",
   "dependencies": {
-    "semantic-ui": "^2.2.2",
+    "knex": "^0.11.10",
     "react": "^15.3.0",
     "react-ace": "^3.5.0",
     "react-dom": "^15.3.0",
+    "react-portal": "^2.2.1",
     "react-redux": "^4.4.5",
     "react-router": "^2.6.1",
     "redux": "^3.5.2",
-    "knex": "^0.11.10",
+    "semantic-ui": "^2.2.2",
     "sqlite3": "^3.1.4"
   },
   "devDependencies": {

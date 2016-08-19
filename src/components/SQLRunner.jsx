@@ -2,6 +2,9 @@ import React from 'react';
 import {connect} from 'react-redux'
 import {RouteHandler, Link, hashHistory} from 'react-router';
 
+import dispatchers from '../redux/dispatchers.jsx';
+import {DimmerType} from '../redux/reducer.jsx';
+
 import AceEditor from 'react-ace';
 import brace from 'brace';
 import 'brace/mode/mysql';
@@ -36,22 +39,35 @@ function dispatchStatus(dispatch) {
                 tabIndex: tabIndex,
                 sql_result: sql_result
             });
-        }
+        },
+        setLoading: dispatchers.setLoading.bind(undefined, dispatch),
+        setAlert: dispatchers.setAlert.bind(undefined, dispatch),
+        setDimmer: dispatchers.setDimmer.bind(undefined, dispatch)
     }
 }
 
 class SQLRunner extends React.Component {
     runSqlCommand() {
-        $(this.refs.modal)
-            .modal('show')
-        ;
+        // this.props.setLoading(true);
+        this.props.setDimmer(true, DimmerType.loader, undefined, undefined);
         this.props.knex.raw(this.props.sql_command)
             .then((resp) => {
-                console.log("RESP", resp);
                 if (resp.length > 0) {
                     this.props.setSqlResult(this.props.tab_index, resp);
                     this.forceUpdate();
                 }
+            })
+            .catch((err)=> {
+                return err;
+            })
+            .then((err)=> {
+                setTimeout(()=> {
+                    if (!_.isUndefined(err)) {
+                        console.log(err);
+                        // this.props.setAlert(true, "Error", err);
+                        this.props.setDimmer(true, DimmerType.alert, "Error", err);
+                    }
+                }, 500);
             });
     }
 
@@ -123,19 +139,12 @@ class SQLRunner extends React.Component {
                     <button className="ui primary button sql-runner-button" onClick={this.runSqlCommand.bind(this)}>
                         Run
                     </button>
-                    <button className="ui basic right button sql-runner-button" onClick={this.setSqlCommand.bind(this, "")}>
+                    <button className="ui basic right button sql-runner-button"
+                            onClick={this.setSqlCommand.bind(this, "")}>
                         Clear
                     </button>
                 </div>
                 {result}
-                <div ref="modal" className="ui modal">
-                    <div className="header">Header</div>
-                    <div className="content">
-                        <p></p>
-                        <p></p>
-                        <p></p>
-                    </div>
-                </div>
             </div>
         );
     }

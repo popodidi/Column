@@ -1,21 +1,26 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import {RouteHandler, Link, hashHistory} from 'react-router';
+import dispatchers from '../redux/dispatchers.jsx';
 
 import _ from 'lodash';
 
 import '../css/tab_content.css';
 
-// function getStatus(state) {
-//     return {
-//         knex: state.knex
-//     }
-// }
+function getStatsus(state){
+    return{}
+}
+
+function dispatchStatus(dispatch){
+    return {
+        setLoading: dispatchers.setLoading.bind(undefined, dispatch),
+        setDimmer: dispatchers.setDimmer.bind(undefined, dispatch)
+    }
+}
 
 class TabContent extends React.Component {
-    constructor(props) {
-        super(props);
-        this.selecFromTable(props.tableName);
+    componentDidMount(){
+        this.selecFromTable(this.props.tableName);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -23,6 +28,7 @@ class TabContent extends React.Component {
     }
 
     selecFromTable(tableName) {
+        this.props.setLoading(true);
         this.props.knex.select().from(tableName)
             .then((rows) => {
                 if (rows.length > 0) {
@@ -32,7 +38,11 @@ class TabContent extends React.Component {
                     this.td = rows;
                     this.forceUpdate();
                 }
-            });
+            }).finally(()=>{
+            setTimeout(()=>{
+                this.props.setLoading(false);
+            }, 500);
+        });
     }
 
     render() {
@@ -71,7 +81,7 @@ class TabContent extends React.Component {
     }
 }
 
-export default TabContent;
+export default connect(getStatsus, dispatchStatus)(TabContent);
 // export default connect(getStatus)(TabContent);
 
 
