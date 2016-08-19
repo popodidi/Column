@@ -1,4 +1,4 @@
-.table-content {
+.ui.table-content {
     overflow-x : scroll;
-
+    padding: 10px 0 0 5px !important;
 }

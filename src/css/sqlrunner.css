@@ -1,0 +1,30 @@
+.sql-runner{
+    padding: 10px 0 10px 10px;
+}
+
+.sql-editor{
+    border-color: rgb(224, 225, 226);
+    border-style: solid;
+    border-width: 0.5px;
+    /*border-image-source: initial;*/
+    /*border-image-slice: initial;*/
+    /*border-image-width: initial;*/
+    /*border-image-outset: initial;*/
+    /*border-image-repeat: initial;*/
+
+    border-radius: 0.28571429rem;
+}
+
+.sql-runner-run-button-container{
+    padding: 10px 0;
+    text-align: right
+}
+.sql-runner-button{
+    margin-left: 10px !important;
+    margin-right: 0 !important;
+
+}
+
+.sql-result{
+    overflow: auto;
+}

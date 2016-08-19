@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Column</title>
+</head>
+<body>
+<div id="App"></div>
+<!--<script src="bundle.js"></script>-->
+<!--<script src="http://localhost:8080/webpack-dev-server.js"></script>-->
+<!--<script src="http://localhost:8080/bundle.js"></script>-->
+<script>
+    (function() {
+        const script = document.createElement('script');
+
+        script.src = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/bundle.js' : 'bundle.js';
+        document.write(script.outerHTML);
+    }());
+</script>
+</body>
+</html>

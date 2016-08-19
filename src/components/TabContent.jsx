@@ -1,28 +1,34 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import {RouteHandler, Link, hashHistory} from 'react-router';
+import dispatchers from '../redux/dispatchers.jsx';
 
 import _ from 'lodash';
 
 import '../css/tab_content.css';
 
-// function getStatus(state) {
-//     return {
-//         knex: state.knex
-//     }
-// }
+function getStatsus(state){
+    return{}
+}
+
+function dispatchStatus(dispatch){
+    return {
+        setLoading: dispatchers.setLoading.bind(undefined, dispatch),
+        setDimmer: dispatchers.setDimmer.bind(undefined, dispatch)
+    }
+}
 
 class TabContent extends React.Component {
-    constructor(props){
-        super(props);
-        this.selecFromTable(props.tableName);
+    componentDidMount(){
+        this.selecFromTable(this.props.tableName);
     }
 
     componentWillReceiveProps(nextProps) {
         this.selecFromTable(nextProps.tableName)
     }
 
-    selecFromTable(tableName){
+    selecFromTable(tableName) {
+        this.props.setLoading(true);
         this.props.knex.select().from(tableName)
             .then((rows) => {
                 if (rows.length > 0) {
@@ -32,34 +38,42 @@ class TabContent extends React.Component {
                     this.td = rows;
                     this.forceUpdate();
                 }
-            });
+            }).finally(()=>{
+            setTimeout(()=>{
+                this.props.setLoading(false);
+            }, 500);
+        });
     }
 
     render() {
+        const thead = _.map(this.th, (th, index) => {
+            return (
+                <th key={"head cell" + th + index}>{th}</th>
+            )
+        });
+
+        const tbody = _.map(this.td, (row, rowIndex) => {
+            return (
+                <tr key={"body cell " +rowIndex}>
+                    {_.map(this.th, (th, thIndex) => {
+                        const tdValue = row[th];
+                        return (
+                            <td key={"body cell: {\n" + "ROW:" + rowIndex + ",\n COLUMN: " + thIndex + "\n}"}>{tdValue}</td>
+                        )
+                    })}
+                </tr>
+            )
+        });
         return (
-            <div className="table-content">
+            <div className="ui basic segment table-content">
                 <table className="ui celled padded table">
                     <thead>
                     <tr>
-                        {_.map(this.th, (th, index) => {
-                            return (
-                                <th key={th + index}>{th}</th>
-                            )
-                        })}
+                        {thead}
                     </tr>
                     </thead>
                     <tbody>
-                    {_.map(this.td, (row, index) => {
-                        return (
-                            <tr key={index}>
-                                {_.map(row, (value) => {
-                                    return (
-                                        <td key={value}>{value}</td>
-                                    )
-                                })}
-                            </tr>
-                        )
-                    })}
+                    {tbody}
                     </tbody>
                 </table>
             </div>
@@ -67,7 +81,7 @@ class TabContent extends React.Component {
     }
 }
 
-export default TabContent;
+export default connect(getStatsus, dispatchStatus)(TabContent);
 // export default connect(getStatus)(TabContent);
 
 

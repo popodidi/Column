@@ -71,7 +71,8 @@ class Intro extends React.Component {
                 <input ref="open" type="file" className="ui button" style={{display:'none'}}
                        onChange={this.fileInputChange.bind(this)}/>
                 <div className="ui action input db-browser">
-                    <input type="text" placeholder="Search..." value={this.props.tab.db_directory} readOnly/>
+                    <input type="text" placeholder="Choose your SQLite database ..."
+                           value={this.props.tab.db_directory} readOnly/>
                     <button className="ui button" onClick={this.openFile.bind(this)}>Browse</button>
                 </div>
                 <button className="massive ui button go-button" onClick={this.start.bind(this)}>START</button>

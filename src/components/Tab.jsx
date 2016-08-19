@@ -35,8 +35,8 @@ class Tab extends React.Component {
         const newTab = Object.assign({}, this.props.tab, {selected_table: this.props.tab.tables[tableIndex]});
         this.props.updateTab(this.props.index, newTab);
     }
-    
-    goToSqlRunner(){
+
+    goToSqlRunner() {
         const newTab = Object.assign({}, this.props.tab, {selected_table: this.props.sql_runner});
         this.props.updateTab(this.props.index, newTab);
     }
@@ -44,28 +44,29 @@ class Tab extends React.Component {
     render() {
         const {knex, selected_table} = this.props.tab;
         return (
-            <div className="ui two column devided grid tab">
-                <div className="row">
-                    <div className="two wide column">
-                        <div className="ui secondary vertical menu tab-side-menu">
-                            <div style={{textAlign: 'center'}}>
-                            <button className="ui secondary button" onClick={this.goToSqlRunner.bind(this)}>SQL Runner</button>
-                                </div>
-                            <div className="ui divider"></div>
-                            {_.map(this.props.tab.tables, (table, tableIndex) => {
-                                const className = table == this.props.tab.selected_table ? "active item" : "item";
-                                return (
-
-                                    <a className={className} key={tableIndex}
-                                       onClick={this.selectTable.bind(this, tableIndex)}>
-                                        {table}
-                                    </a>
-                                )
-                            })}
+            <div className="tab">
+                <div className="tab-side-panel">
+                    <div className="ui secondary vertical menu tab-side-menu">
+                        <div style={{textAlign: 'center'}}>
+                            <button className="ui secondary button" onClick={this.goToSqlRunner.bind(this)}>SQL Runner
+                            </button>
                         </div>
+                        <div className="ui divider"></div>
+                        {_.map(this.props.tab.tables, (table, tableIndex) => {
+                            const className = table == this.props.tab.selected_table ? "active item" : "item";
+                            return (
+
+                                <a className={className} key={tableIndex}
+                                   onClick={this.selectTable.bind(this, tableIndex)}>
+                                    {table}
+                                </a>
+                            )
+                        })}
                     </div>
-                    <div className="twelve wide stretched column tab-content">
-                        {selected_table == this.props.sql_runner?
+                </div>
+                <div className="tab-content">
+                    <div className="tab-content-inner">
+                        {selected_table == this.props.sql_runner ?
                             <SQLRunner knex={knex}/> : <TabContent tableName={selected_table} knex={knex}/>}
                     </div>
                 </div>
