@@ -18,12 +18,12 @@ var config = {
         './src/index.jsx'
     ],
     output: {
-        path: './.build',
+        path: './build',
         publicPath: 'http://localhost:8080/',
         filename: 'bundle.js'
     },
     devServer: {
-        contentBase: './.build/',
+        contentBase: './build/',
         // hot: true,
         port: 8080
     },

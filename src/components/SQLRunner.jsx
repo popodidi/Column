@@ -40,17 +40,15 @@ function dispatchStatus(dispatch) {
                 sql_result: sql_result
             });
         },
-        setLoading: dispatchers.setLoading.bind(undefined, dispatch),
-        setAlert: dispatchers.setAlert.bind(undefined, dispatch),
         setDimmer: dispatchers.setDimmer.bind(undefined, dispatch)
     }
 }
 
 class SQLRunner extends React.Component {
     runSqlCommand() {
-        // this.props.setLoading(true);
         this.props.setDimmer(true, DimmerType.loader, undefined, undefined);
-        this.props.knex.raw(this.props.sql_command)
+        // this.props.setSqlCommand(this.props.tab_index, this.sql_command)
+        this.props.knex.raw(this.sql_command)
             .then((resp) => {
                 if (resp.length > 0) {
                     this.props.setSqlResult(this.props.tab_index, resp);
@@ -58,21 +56,25 @@ class SQLRunner extends React.Component {
                 }
             })
             .catch((err)=> {
+                this.props.setSqlResult(this.props.tab_index, []);
+                this.forceUpdate();
                 return err;
             })
             .then((err)=> {
                 setTimeout(()=> {
                     if (!_.isUndefined(err)) {
                         console.log(err);
-                        // this.props.setAlert(true, "Error", err);
-                        this.props.setDimmer(true, DimmerType.alert, "Error", err);
+                        // this.props.setDimmer(true, DimmerType.alert, "Error", err);
+                    }else{
+                        this.props.setDimmer(false)
                     }
+                    this.props.setDimmer(false)
                 }, 500);
             });
     }
 
     setSqlCommand(newValue) {
-        this.props.setSqlCommand(this.props.tab_index, newValue)
+        this.sql_command = newValue;
     }
 
 
@@ -122,13 +124,13 @@ class SQLRunner extends React.Component {
             <div className="sql-runner">
                 <AceEditor
                     className="sql-editor"
+                    ref="sqlEditor"
                     mode="mysql"
                     theme="github"
                     name="sql_command"
                     showPrintMargin={false}
                     fontSize={17}
                     editorProps={{$blockScrolling: true}}
-                    value={this.props.sql_command}
                     onChange={this.setSqlCommand.bind(this)}
                     height="100px"
                     width="100%"

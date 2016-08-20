@@ -38,7 +38,7 @@ class Intro extends React.Component {
 
     start() {
 
-        var db_name = _(this.props.tab.db_directory).split('/').last()
+        var db_name = _(this.props.tab.db_directory).split('/').last();
 
         var knex = require('knex')({
             client: 'sqlite3',

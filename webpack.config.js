@@ -16,7 +16,7 @@ var config = {
         './src/index.jsx'
     ],
     output: {
-        path: './.build',
+        path: './build',
         publicPath:'./',
         filename: 'bundle.js'
     },

@@ -53,8 +53,6 @@
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(2);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -81,19 +79,6 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	// Compenent
-	// import Intro from './components/Intro.jsx';
-
-	// import Tab from './components/Tab.jsx';
-	// import TabContent from './components/TabContent.jsx';
-	// import SQLRunner from './components/SQLRunner.jsx';
-
 	_reactDom2.default.render(_react2.default.createElement(
 	    _reactRedux.Provider,
 	    { store: _store2.default },
@@ -104,28 +89,7 @@
 	    )
 	), document.getElementById('App'));
 
-	var Base = function (_React$Component) {
-	    _inherits(Base, _React$Component);
-
-	    function Base() {
-	        _classCallCheck(this, Base);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Base).apply(this, arguments));
-	    }
-
-	    _createClass(Base, [{
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                this.props.children
-	            );
-	        }
-	    }]);
-
-	    return Base;
-	}(_react2.default.Component);
+	// Compenent
 
 /***/ },
 /* 2 */
@@ -161,6 +125,10 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactDom = __webpack_require__(3);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
 	var _reactRedux = __webpack_require__(6);
 
 	var _reactRouter = __webpack_require__(4);
@@ -192,11 +160,10 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	// import Dimmer from './portals/Dimmer.jsx';
 
 	function getStatus(state) {
 	    return {
-	        loading: state.loading,
-	        alert: state.alert,
 	        dimmer: state.dimmer,
 	        active_tab: state.active_tab,
 	        tabs: state.tabs,
@@ -236,6 +203,44 @@
 	    }
 
 	    _createClass(Main, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.loader = (0, _jquery2.default)(this.refs.loader).modal({
+	                closable: false,
+	                allowMultiple: false,
+	                onHide: _lodash2.default.get(this, ["onLoaderHide"], _lodash2.default.noop),
+	                onShow: _lodash2.default.get(this, ["onLoaderShow"], _lodash2.default.noop)
+	            }).modal({
+	                // blurring: true,
+	                inverted: true
+	            });
+	            // this.alert = $(this.refs.alert).modal({
+	            //     closable: false,
+	            //     allowMultiple: false,
+	            //     onHide: _.get(this, ["onAlertHide"], _.noop),
+	            //     onShow: _.get(this, ["onAlertShow"], _.noop),
+	            // });
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate() {
+	            if (this.props.dimmer.active) {
+	                switch (this.props.dimmer.type) {
+	                    case _reducer.DimmerType.loader:
+	                        this.showLoader();
+	                        break;
+	                    case _reducer.DimmerType.alert:
+	                        this.showAlert();
+	                        break;
+	                }
+	            } else {
+	                this.hideAllModal();
+	            }
+	        }
+
+	        // Tabs manipulation
+
+	    }, {
 	        key: 'selectTab',
 	        value: function selectTab(index, e) {
 	            this.props.setActiveTab(index);
@@ -246,37 +251,40 @@
 	            this.props.deleteTab(index);
 	            this.forceUpdate();
 	        }
-	    }, {
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {}
 
-	        // componentWillReceiveProps(nextProps) {
-	        //     console.log("NEX",nextProps.dimmer);
-	        //     console.log(nextProps.dimmer.type == DimmerType.loader);
-	        //     if (nextProps.dimmer.active) {
-	        //         switch (nextProps.dimmer.type){
-	        //             case DimmerType.alert:
-	        //                 $(this.refs.alertModal).modal('show');
-	        //             case DimmerType.loader:
-	        //                 $(this.refs.loaderDimmer).dimmer('show');
-	        //         }
-	        //     }else{
-	        //         $(this.refs.loaderDimmer).modal('hide');
-	        //         $(this.refs.alertModal).modal('hide');
-	        //     }
-	        // }]
-	        // <div ref="loaderDimmer" className="ui page inverted dimmer">
-	        // <div className="ui massive loader"/>
-	        // </div>
-	        // <div ref="alertModal" className="ui small modal">
-	        //     <i className="close icon"></i>
-	        //     <div className="header">
-	        //     {_.toString(this.props.alert.title)}
-	        // </div>
-	        // <div className="content">
-	        //     <p>{_.toString(this.props.alert.message)}</p>
-	        //     </div>
-	        //     </div>
+	        // Modal control
+
+	    }, {
+	        key: 'showLoader',
+	        value: function showLoader() {
+	            this.loader.modal("show");
+	        }
+
+	        // showAlert(){
+	        //     this.alert.modal("show");
+	        // }
+
+	    }, {
+	        key: 'hideAllModal',
+	        value: function hideAllModal() {
+	            (0, _jquery2.default)(this.refs.loader).modal("hide");
+	            // $(this.refs.alert).modal("hide");
+	        }
+	    }, {
+	        key: 'onLoaderHide',
+	        value: function onLoaderHide() {
+	            console.log("HIDE");
+	        }
+	    }, {
+	        key: 'onLoaderShow',
+	        value: function onLoaderShow() {
+	            console.log("SHOW");
+	        }
+
+	        // onAlertShow() {
+	        //     console.log("ALERT",this.prototype);
+	        // }
+
 
 	    }, {
 	        key: 'render',
@@ -285,9 +293,34 @@
 
 	            var tabs = this.props.tabs;
 
+	            var dimmerContent;
+	            if (this.props.dimmer.active) {
+	                switch (this.props.dimmer.type) {
+	                    case _reducer.DimmerType.loader:
+	                        dimmerContent = _react2.default.createElement('div', { className: 'ui massive loader' });
+	                        break;
+	                    case _reducer.DimmerType.alert:
+	                        dimmerContent = this.props.dimmer.message;
+	                        break;
+	                }
+	            }
+	            // <div ref="alert" className="ui basic modal">
+	            // <div className="header">Header</div>
+	            // <div className="content"/>
+	            // <div className="actions">
+	            // <div className="ui approve button">Approve</div>
+	            // <div className="ui button">Neutral</div>
+	            // <div className="ui cancel button">Cancel</div>
+	            // </div>
+	            // </div>
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'ui main' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { ref: 'loader', className: 'ui basic modal' },
+	                    _react2.default.createElement('div', { className: 'ui loader' })
+	                ),
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'ui top attached tabular menu tab-menu' },
@@ -366,12 +399,12 @@
 	    // db_directory: "Choose your SQLite database ...",
 	    // tables: [],
 	    //
-	    loading: false,
-	    alert: {
-	        active: false,
-	        title: undefined,
-	        message: undefined
-	    },
+	    // loading: false,
+	    // alert: {
+	    //     active: false,
+	    //     title: undefined,
+	    //     message: undefined
+	    // },
 	    dimmer: {
 	        active: false,
 	        type: undefined,
@@ -1166,6 +1199,8 @@
 
 	var _dispatchers2 = _interopRequireDefault(_dispatchers);
 
+	var _reducer = __webpack_require__(7);
+
 	var _lodash = __webpack_require__(8);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
@@ -1186,7 +1221,7 @@
 
 	function dispatchStatus(dispatch) {
 	    return {
-	        setLoading: _dispatchers2.default.setLoading.bind(undefined, dispatch),
+	        // setLoading: dispatchers.setLoading.bind(undefined, dispatch),
 	        setDimmer: _dispatchers2.default.setDimmer.bind(undefined, dispatch)
 	    };
 	}
@@ -1215,18 +1250,21 @@
 	        value: function selecFromTable(tableName) {
 	            var _this2 = this;
 
-	            this.props.setLoading(true);
+	            this.props.setDimmer(true, _reducer.DimmerType.loader);
 	            this.props.knex.select().from(tableName).then(function (rows) {
-	                if (rows.length > 0) {
-	                    _this2.th = _lodash2.default.map(rows[0], function (value, key) {
-	                        return key;
-	                    });
-	                    _this2.td = rows;
-	                    _this2.forceUpdate();
-	                }
-	            }).finally(function () {
+	                // if (rows.length > 0) {
+	                _this2.th = _lodash2.default.map(rows[0], function (value, key) {
+	                    return key;
+	                });
+	                _this2.td = rows;
+	                _this2.forceUpdate();
+	                // }
+	            }).catch(function () {
+	                _this2.td = [];
+	                _this2.forceUpdate();
+	            }).then(function () {
 	                setTimeout(function () {
-	                    _this2.props.setLoading(false);
+	                    _this2.props.setDimmer(false);
 	                }, 500);
 	            });
 	        }
@@ -1460,8 +1498,6 @@
 	                sql_result: sql_result
 	            });
 	        },
-	        setLoading: _dispatchers2.default.setLoading.bind(undefined, dispatch),
-	        setAlert: _dispatchers2.default.setAlert.bind(undefined, dispatch),
 	        setDimmer: _dispatchers2.default.setDimmer.bind(undefined, dispatch)
 	    };
 	}
@@ -1480,29 +1516,33 @@
 	        value: function runSqlCommand() {
 	            var _this2 = this;
 
-	            // this.props.setLoading(true);
 	            this.props.setDimmer(true, _reducer.DimmerType.loader, undefined, undefined);
-	            this.props.knex.raw(this.props.sql_command).then(function (resp) {
+	            // this.props.setSqlCommand(this.props.tab_index, this.sql_command)
+	            this.props.knex.raw(this.sql_command).then(function (resp) {
 	                if (resp.length > 0) {
 	                    _this2.props.setSqlResult(_this2.props.tab_index, resp);
 	                    _this2.forceUpdate();
 	                }
 	            }).catch(function (err) {
+	                _this2.props.setSqlResult(_this2.props.tab_index, []);
+	                _this2.forceUpdate();
 	                return err;
 	            }).then(function (err) {
 	                setTimeout(function () {
 	                    if (!_lodash2.default.isUndefined(err)) {
 	                        console.log(err);
-	                        // this.props.setAlert(true, "Error", err);
-	                        _this2.props.setDimmer(true, _reducer.DimmerType.alert, "Error", err);
+	                        // this.props.setDimmer(true, DimmerType.alert, "Error", err);
+	                    } else {
+	                        _this2.props.setDimmer(false);
 	                    }
+	                    _this2.props.setDimmer(false);
 	                }, 500);
 	            });
 	        }
 	    }, {
 	        key: 'setSqlCommand',
 	        value: function setSqlCommand(newValue) {
-	            this.props.setSqlCommand(this.props.tab_index, newValue);
+	            this.sql_command = newValue;
 	        }
 	    }, {
 	        key: 'render',
@@ -1571,13 +1611,13 @@
 	                { className: 'sql-runner' },
 	                _react2.default.createElement(_reactAce2.default, {
 	                    className: 'sql-editor',
+	                    ref: 'sqlEditor',
 	                    mode: 'mysql',
 	                    theme: 'github',
 	                    name: 'sql_command',
 	                    showPrintMargin: false,
 	                    fontSize: 17,
 	                    editorProps: { $blockScrolling: true },
-	                    value: this.props.sql_command,
 	                    onChange: this.setSqlCommand.bind(this),
 	                    height: '100px',
 	                    width: '100%',
@@ -3954,7 +3994,7 @@
 
 
 	// module
-	exports.push([module.id, "#App{\n    position: relative;\n    height: 100%;\n}\n.main{\n    position: relative;\n    padding-top: 10px;\n    width: 100%;\n    height: 100%;\n    overflow: hidden;\n}\n\n.main .tab-menu{\n    padding-left: 10px;\n}\n\n.main .tab-body{\n    position: relative;\n    height: 100%;\n    width: 100%;\n    margin-right:0;\n    padding: 0 !important;\n    padding-bottom: 55px !important;\n}", ""]);
+	exports.push([module.id, "#App{\n    position: relative;\n    height: 100%;\n}\n.main{\n    position: relative;\n    padding-top: 10px;\n    width: 100%;\n    height: 100%;\n    overflow: hidden;\n}\n\n.main .tab-menu{\n    padding-left: 10px;\n}\n\n.main .tab-body {\n    position: relative;\n    height: 100%;\n    width: 100%;\n    margin-right: 0;\n    padding: 0 !important;\n    padding-bottom: 68px !important;\n}", ""]);
 
 	// exports
 

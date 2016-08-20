@@ -11,8 +11,6 @@ const path = require('path');
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
     createWindow();
-
-
     setApplicationMenu();
 });
 
@@ -44,8 +42,8 @@ function setApplicationMenu() {
         {
             label: "Application",
             submenu: [
-                // { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
-                // { type: "separator" },
+                // { label: "About", selector: "orderFrontStandardAboutPanel:" },
+                { type: "separator" },
                 {
                     label: "Quit", accelerator: "Command+Q", click: function () {
                     app.quit();
@@ -160,6 +158,25 @@ function setApplicationMenu() {
         }
     ];
 
+    if (process.env.NODE_ENV == "development") {
+        template[2].submenu = template[2].submenu.concat({
+            label: 'Toggle Developer Tools',
+            accelerator: (function () {
+                if (process.platform === 'darwin') {
+                    return 'Alt+Command+I'
+                } else {
+                    return 'Ctrl+Shift+I'
+                }
+            })(),
+            click: function (item, focusedWindow) {
+                if (focusedWindow) {
+                    focusedWindow.toggleDevTools()
+                }
+            }
+        })
+    }
+
+
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
@@ -171,7 +188,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({width: 1100, height: 700});
 
     // and load the index.html of the app.
-    mainWindow.loadURL(path.join('file://', __dirname, './.build/index.html'));
+    mainWindow.loadURL(path.join('file://', __dirname, './build/index.html'));
     // mainWindow.loadURL(path.join('http://localhost:8080/'));
 
     // Open the DevTools.

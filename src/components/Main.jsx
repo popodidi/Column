@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {connect} from 'react-redux'
 import {RouteHandler, Link, hashHistory} from 'react-router';
 
@@ -6,6 +7,7 @@ import {DimmerType} from '../redux/reducer.jsx';
 
 import Intro from './Intro.jsx';
 import Tab from './Tab.jsx';
+// import Dimmer from './portals/Dimmer.jsx';
 
 import _ from 'lodash';
 import $ from 'jquery';
@@ -14,8 +16,6 @@ import '../css/main.css';
 
 function getStatus(state) {
     return {
-        loading: state.loading,
-        alert: state.alert,
         dimmer: state.dimmer,
         active_tab: state.active_tab,
         tabs: state.tabs,
@@ -47,6 +47,41 @@ function dispatchStatus(dispatch) {
 
 class Main extends React.Component {
 
+    componentDidMount() {
+        this.loader = $(this.refs.loader).modal({
+            closable: false,
+            allowMultiple: false,
+            onHide: _.get(this, ["onLoaderHide"], _.noop),
+            onShow: _.get(this, ["onLoaderShow"], _.noop),
+        }).modal({
+            // blurring: true,
+            inverted: true
+        });
+        // this.alert = $(this.refs.alert).modal({
+        //     closable: false,
+        //     allowMultiple: false,
+        //     onHide: _.get(this, ["onAlertHide"], _.noop),
+        //     onShow: _.get(this, ["onAlertShow"], _.noop),
+        // });
+    }
+
+
+    componentDidUpdate() {
+        if (this.props.dimmer.active) {
+            switch (this.props.dimmer.type) {
+                case DimmerType.loader:
+                    this.showLoader();
+                    break;
+                case DimmerType.alert:
+                    this.showAlert();
+                    break;
+            }
+        } else {
+            this.hideAllModal();
+        }
+    }
+
+    // Tabs manipulation
     selectTab(index, e) {
         this.props.setActiveTab(index);
     }
@@ -56,41 +91,61 @@ class Main extends React.Component {
         this.forceUpdate();
     }
 
-    componentDidMount() {
+    // Modal control
+    showLoader() {
+        this.loader.modal("show");
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     console.log("NEX",nextProps.dimmer);
-    //     console.log(nextProps.dimmer.type == DimmerType.loader);
-    //     if (nextProps.dimmer.active) {
-    //         switch (nextProps.dimmer.type){
-    //             case DimmerType.alert:
-    //                 $(this.refs.alertModal).modal('show');
-    //             case DimmerType.loader:
-    //                 $(this.refs.loaderDimmer).dimmer('show');
-    //         }
-    //     }else{
-    //         $(this.refs.loaderDimmer).modal('hide');
-    //         $(this.refs.alertModal).modal('hide');
-    //     }
-    // }]
-// <div ref="loaderDimmer" className="ui page inverted dimmer">
-// <div className="ui massive loader"/>
-// </div>
-// <div ref="alertModal" className="ui small modal">
-//     <i className="close icon"></i>
-//     <div className="header">
-//     {_.toString(this.props.alert.title)}
-// </div>
-// <div className="content">
-//     <p>{_.toString(this.props.alert.message)}</p>
-//     </div>
-//     </div>
+    // showAlert(){
+    //     this.alert.modal("show");
+    // }
+
+    hideAllModal(){
+        $(this.refs.loader).modal("hide");
+        // $(this.refs.alert).modal("hide");
+    }
+
+    onLoaderHide() {
+        console.log("HIDE");
+    }
+
+    onLoaderShow() {
+        console.log("SHOW");
+    }
+
+    // onAlertShow() {
+    //     console.log("ALERT",this.prototype);
+    // }
+
 
     render() {
         const {tabs} = this.props;
+        var dimmerContent;
+        if (this.props.dimmer.active) {
+            switch (this.props.dimmer.type) {
+                case DimmerType.loader:
+                    dimmerContent = (<div className="ui massive loader"/>);
+                    break;
+                case DimmerType.alert:
+                    dimmerContent = this.props.dimmer.message;
+                    break;
+            }
+        }
+        // <div ref="alert" className="ui basic modal">
+        // <div className="header">Header</div>
+        // <div className="content"/>
+        // <div className="actions">
+        // <div className="ui approve button">Approve</div>
+        // <div className="ui button">Neutral</div>
+        // <div className="ui cancel button">Cancel</div>
+        // </div>
+        // </div>
         return (
             <div className="ui main">
+                <div ref="loader" className="ui basic modal">
+                        <div className="ui loader"/>
+                </div>
+
                 <div className="ui top attached tabular menu tab-menu">
                     {_.map(tabs, (tab, index) => {
                         const className = index == this.props.active_tab ? "active item" : "item";

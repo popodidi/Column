@@ -12,12 +12,12 @@ const initialState = {
     // db_directory: "Choose your SQLite database ...",
     // tables: [],
     //
-    loading: false,
-    alert: {
-        active: false,
-        title: undefined,
-        message: undefined
-    },
+    // loading: false,
+    // alert: {
+    //     active: false,
+    //     title: undefined,
+    //     message: undefined
+    // },
     dimmer:{
         active: false,
         type: undefined,

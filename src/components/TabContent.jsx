@@ -1,25 +1,27 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import {RouteHandler, Link, hashHistory} from 'react-router';
+
 import dispatchers from '../redux/dispatchers.jsx';
+import {DimmerType} from '../redux/reducer.jsx';
 
 import _ from 'lodash';
 
 import '../css/tab_content.css';
 
-function getStatsus(state){
-    return{}
+function getStatsus(state) {
+    return {}
 }
 
-function dispatchStatus(dispatch){
+function dispatchStatus(dispatch) {
     return {
-        setLoading: dispatchers.setLoading.bind(undefined, dispatch),
+        // setLoading: dispatchers.setLoading.bind(undefined, dispatch),
         setDimmer: dispatchers.setDimmer.bind(undefined, dispatch)
     }
 }
 
 class TabContent extends React.Component {
-    componentDidMount(){
+    componentDidMount() {
         this.selecFromTable(this.props.tableName);
     }
 
@@ -28,19 +30,23 @@ class TabContent extends React.Component {
     }
 
     selecFromTable(tableName) {
-        this.props.setLoading(true);
+        this.props.setDimmer(true, DimmerType.loader);
         this.props.knex.select().from(tableName)
             .then((rows) => {
-                if (rows.length > 0) {
-                    this.th = _.map(rows[0], (value, key) => {
-                        return key;
-                    });
-                    this.td = rows;
-                    this.forceUpdate();
-                }
-            }).finally(()=>{
-            setTimeout(()=>{
-                this.props.setLoading(false);
+                // if (rows.length > 0) {
+                this.th = _.map(rows[0], (value, key) => {
+                    return key;
+                });
+                this.td = rows;
+                this.forceUpdate();
+                // }
+            })
+            .catch(()=> {
+                this.td = [];
+                this.forceUpdate();
+            }).then(()=> {
+            setTimeout(()=> {
+                this.props.setDimmer(false);
             }, 500);
         });
     }
